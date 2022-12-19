@@ -592,8 +592,15 @@ class SidFile:
 
     def collect_inner_data_nodes(self, statements, prefix=""):
         for statement in statements:
+
             if statement.keyword in self.leaf_keywords:
-                self.merge_item('data', self.get_path(statement, prefix))
+                for s in statement.substmts:
+                    print (statement.arg, "===>", s.arg)
+                    if s.keyword == "type":
+                        typename = s.arg
+                        print (">>>",typename)
+
+                self.merge_item('data', self.get_path(statement, prefix), typename)
 
             elif statement.keyword in self.container_keywords:
                 self.merge_item('data', self.get_path(statement, prefix))
@@ -651,13 +658,13 @@ class SidFile:
 
         return prefix + path
 
-    def merge_item(self, namespace, identifier):
+    def merge_item(self, namespace, identifier, typename="Unknown"):
         for item in self.content['items']:
             if (namespace == item['namespace'] and identifier == item['identifier']):
                 item['status'] = 'o' # Item already assigned
                 return
         self.content['items'].append(collections.OrderedDict(
-            [('namespace', namespace), ('identifier', identifier), ('sid', -1), ('status', 'n')]))
+            [('namespace', namespace), ('identifier', identifier), ('sid', -1), ('status', 'n'), ("type", typename)]))
         self.is_consistent = False
 
     ########################################################
@@ -825,6 +832,7 @@ class SidFile:
         for item in items:
             type_ = item.pop('type', None)
             label = item.pop('label', None)
+            typename = item.pop('type', None)
             if not type_:
                 pass
             elif type_ in ('Module', 'Submodule'):
@@ -842,3 +850,4 @@ class SidFile:
             elif type_ in self.node_keywords:
                 item['namespace'] = 'data'
                 item['identifier'] = '/' + self.module_name + ':' + label[1:]
+                item['type'] = typename

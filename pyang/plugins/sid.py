@@ -55,6 +55,10 @@ class SidPlugin(plugin.PyangPlugin):
                                  action="store_true",
                                  dest="list_sid",
                                  help="Print the list of SID."),
+            optparse.make_option("--sid-extention",
+                                 action="store_true",
+                                 dest="sid_ext",
+                                 help="Add info to the sid file to manipulate coreconf."),
             optparse.make_option("--sid-registration-info",
                                  action="store_true",
                                  dest="sid_registration_info",
@@ -129,6 +133,10 @@ class SidPlugin(plugin.PyangPlugin):
 
         if ctx.opts.list_sid:
             sid_file.list_content = True
+
+        if ctx.opts.sid_ext:
+            print ("set sid extentions")
+            sid_file.sid_extention = True
 
         try:
             sid_file.process_sid_file(modules[0])
@@ -271,6 +279,7 @@ class SidFile:
         self.module_name = ''
         self.module_revision = ''
         self.output_file_name = ''
+        self.sid_extention = False
 
     def process_sid_file(self, module):
         self.module_name = module.i_modulename

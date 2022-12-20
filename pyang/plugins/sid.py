@@ -556,6 +556,9 @@ class SidFile:
     def collect_module_items(self, module):
         if 'items' not in self.content:
             self.content['items'] = []
+        
+        if 'key-mapping' not in self.content: 
+            self.content['key-mapping'] = {}
 
         for item in self.content['items']:
             item['status'] = 'd' # Set to 'd' deleted, updated to 'o' if present in .yang file
@@ -603,16 +606,25 @@ class SidFile:
         for statement in statements:
 
             if statement.keyword in self.leaf_keywords:
-                for s in statement.substmts:
-                    print (statement.arg, "===>", s.arg)
+                for s in statement.substmts: # find type declaration
                     if s.keyword == "type":
                         typename = s.arg
-                        print (">>>",typename)
 
+                        if typename=="union": # union put all types in an array
+                            typename = []
+                            for t in s.i_type_spec.types:
+                                typename.append(t.arg)
                 self.merge_item('data', self.get_path(statement, prefix), typename)
 
             elif statement.keyword in self.container_keywords:
                 self.merge_item('data', self.get_path(statement, prefix))
+
+                if self.sid_extention:
+                    if statement.keyword == "list": # if list add list-id : [key-id, ...]
+                        keys = []
+                        for k in statement.i_key:
+                            keys.append(self.get_path(k, prefix))
+                        self.content["key-mapping"][self.get_path(statement, prefix)] = keys
                 self.collect_inner_data_nodes(statement.i_children, prefix)
 
             elif statement.keyword == 'action':
@@ -667,14 +679,19 @@ class SidFile:
 
         return prefix + path
 
-    def merge_item(self, namespace, identifier, typename="Unknown"):
+    def merge_item(self, namespace, identifier, typename=None):
         for item in self.content['items']:
             if (namespace == item['namespace'] and identifier == item['identifier']):
                 item['status'] = 'o' # Item already assigned
                 return
-        self.content['items'].append(collections.OrderedDict(
-            [('namespace', namespace), ('identifier', identifier), ('sid', -1), ('status', 'n'), ("type", typename)]))
+        if self.sid_extention and typename != None:
+            self.content['items'].append(collections.OrderedDict(
+                [('namespace', namespace), ('identifier', identifier), ('sid', -1), ('status', 'n'), ("type", typename)]))
+        else:
+            self.content['items'].append(collections.OrderedDict(
+                [('namespace', namespace), ('identifier', identifier), ('sid', -1), ('status', 'n')]))            
         self.is_consistent = False
+
 
     ########################################################
     # Sort the items list by 'namespace' and 'identifier'
@@ -773,12 +790,29 @@ class SidFile:
                   "with a 'deprecated' or 'obsolete' status.")
 
     ########################################################
+    def find_sid(self, id):
+        for e in self.content['items']:
+            if e['identifier'] == id:
+                return e['sid']
+        return None
+
     def generate_file(self):
         for item in self.content['items']:
             del item['status']
 
         if os.path.exists(self.output_file_name):
             os.remove(self.output_file_name)
+
+        if self.sid_extention:
+            key_mapping_sid = {}
+            for k, v in self.content['key-mapping'].items():
+                k_sid = self.find_sid(k)
+                v_sids = []
+                for e in v:
+                    v_sids.append(self.find_sid(e))
+                key_mapping_sid[k_sid] = v_sids
+
+            self.content['key-mapping'] = key_mapping_sid
 
         with open(self.output_file_name, 'w') as outfile:
             json.dump(self.content, outfile, indent=2)
@@ -859,4 +893,3 @@ class SidFile:
             elif type_ in self.node_keywords:
                 item['namespace'] = 'data'
                 item['identifier'] = '/' + self.module_name + ':' + label[1:]
-                item['type'] = typename

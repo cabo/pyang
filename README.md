@@ -32,7 +32,7 @@ Pyang can be installed from [PyPI](https://pypi.python.org/pypi):
 - **2 Source**
 
 ```sh
-  git clone https://github.com/mbj4668/pyang.git
+  git clone https://github.com/ltn22/pyang.git
   cd pyang
   python setup.py install
   (this might require root access)

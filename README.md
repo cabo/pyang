@@ -11,6 +11,10 @@ generate code from the modules.
 
 YANG ([RFC 7950](http://tools.ietf.org/html/rfc7950)) is a data modeling language for NETCONF ([RFC 6241](http://tools.ietf.org/html/rfc6241)), developed by the IETF [NETMOD](http://www.ietf.org/html.charters/netmod-charter.html) WG.
 
+This fork introduces a new option called --sid-extention which add extra information to the sid file to allow easier conversion between JSON and CBOR formats. If the "Type" key is present, the sid is associated to a YANG leaf and the value indicate the type present in the YANG Data Model. In case of union, the value is an array of all the types.
+
+--sid-extention build also a key-mapping entry containing the sid of a list as the object key and the sids of the list's keys as values. This may be use to find elements without refering to the YANG Data Model.
+
 ## Documentation ##
 
 See [Documentation](https://github.com/mbj4668/pyang/wiki/Documentation).

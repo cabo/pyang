@@ -15,6 +15,17 @@ This fork introduces a new option called --sid-extention which add extra informa
 
 --sid-extention build also a key-mapping entry containing the sid of a list as the object key and the sids of the list's keys as values. This may be use to find elements without refering to the YANG Data Model.
 
+it will add a "type" key in the leaf SID description (the abscence of type indicate that the node is not a leaf). Type is either:
+- the type used in the definition
+- an array of type for union
+- an object mapping enumeration number with enumeration value
+
+a "key-mapping" object. keys are list SIDs and value lists in an array the key SIDs. Testing the presence of "key-mapping" in the JSON structure allows to check if the --sid-extention argument has been specified.
+
+WARNING: This hack has been tested on YANG Data Model used by SCHC. There is no guaranty that is works in all YANG Data Models.
+
+
+
 ## Documentation ##
 
 See [Documentation](https://github.com/mbj4668/pyang/wiki/Documentation).

@@ -20,7 +20,9 @@ it will add a "type" key in the leaf SID description (the abscence of type indic
 - an array of type for union
 - an object mapping enumeration number with enumeration value
 
-a "key-mapping" object. keys are list SIDs and value lists in an array the key SIDs.
+a "key-mapping" object. keys are list SIDs and value lists in an array the key SIDs. Testing the presence of "key-mapping" in the JSON structure allows to check if the --sid-extention argument has been specified.
+
+WARNING: This hack has been tested on YANG Data Model used by SCHC. There is no guaranty that is works in all YANG Data Models.
 
 
 

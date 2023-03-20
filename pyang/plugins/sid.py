@@ -647,7 +647,6 @@ class SidFile:
             if statement.keyword in self.leaf_keywords:
                 print (statement.i_module.arg)
                 for stmt in statement.substmts: 
-                    print (stmt.keyword)
                     if stmt.keyword == "type":
                         itype= stmt.i_typedef
                         if itype != None:

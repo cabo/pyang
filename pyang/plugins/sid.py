@@ -597,6 +597,7 @@ class SidFile:
             self.merge_item('identity', identity)
 
         for substmt in module.substmts:
+            print (substmt.keyword)
             if substmt.keyword == 'augment':
                 self.collect_in_substmts(substmt.substmts)
             elif self.has_yang_data_extension(substmt):
@@ -607,6 +608,7 @@ class SidFile:
 
             if statement.keyword in self.leaf_keywords:
                 for s in statement.substmts: # find type declaration
+                    print (s)
                     if s.keyword == "type":
                         typename = s.arg
 
@@ -643,7 +645,29 @@ class SidFile:
     def collect_in_substmts(self, substmts):
         for statement in substmts:
             if statement.keyword in self.leaf_keywords:
-                self.merge_item('data', self.get_path(statement))
+                print (statement.i_module.arg)
+                for stmt in statement.substmts: 
+                    print (stmt.keyword)
+                    if stmt.keyword == "type":
+                        itype= stmt.i_typedef
+                        if itype != None:
+                            type_descr = {}
+                            for type_stmt in itype.substmts:
+                                print  (type_stmt.arg)
+                                if type_stmt.arg == "enumeration":
+                                    for enum in type_stmt.substmts:
+                                        enum_name = enum.arg
+                                        for val in enum.substmts:
+                                            if val.keyword == "value":
+                                                enum_val = val.arg
+                                                break
+                                        type_descr[enum_val] = enum_name
+                        else:
+                            type_descr = stmt.arg
+
+                    
+                    
+                self.merge_item('data', self.get_path(statement), type_descr)
 
             elif statement.keyword in self.container_keywords:
                 self.merge_item('data', self.get_path(statement))

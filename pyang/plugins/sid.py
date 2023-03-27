@@ -610,7 +610,13 @@ class SidFile:
                 for s in statement.substmts: # find type declaration
                     print (s)
                     if s.keyword == "type":
-                        typename = s.arg
+
+                        if s.i_type_spec.name == "enumeration":
+                            typename = {}
+                            for k, v in s.i_type_spec.enums:
+                                typename[str(v)] = k
+                        else:
+                            typename = s.arg
 
                         if typename=="union": # union put all types in an array
                             typename = []

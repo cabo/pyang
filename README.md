@@ -11,16 +11,16 @@ generate code from the modules.
 
 YANG ([RFC 7950](http://tools.ietf.org/html/rfc7950)) is a data modeling language for NETCONF ([RFC 6241](http://tools.ietf.org/html/rfc6241)), developed by the IETF [NETMOD](http://www.ietf.org/html.charters/netmod-charter.html) WG.
 
-This fork introduces a new option called --sid-extention which add extra information to the sid file to allow easier conversion between JSON and CBOR formats. If the "Type" key is present, the sid is associated to a YANG leaf and the value indicate the type present in the YANG Data Model. In case of union, the value is an array of all the types.
+This fork introduces a new option called --sid-extension which add extra information to the sid file to allow easier conversion between JSON and CBOR formats. If the "Type" key is present, the sid is associated to a YANG leaf and the value indicate the type present in the YANG Data Model. In case of union, the value is an array of all the types.
 
---sid-extention build also a key-mapping entry containing the sid of a list as the object key and the sids of the list's keys as values. This may be use to find elements without refering to the YANG Data Model.
+--sid-extension build also a key-mapping entry containing the sid of a list as the object key and the sids of the list's keys as values. This may be use to find elements without referring to the YANG Data Model.
 
-it will add a "type" key in the leaf SID description (the abscence of type indicate that the node is not a leaf). Type is either:
+it will add a "type" key in the leaf SID description (the absence of type indicate that the node is not a leaf). Type is either:
 - the type used in the definition
 - an array of type for union
 - an object mapping enumeration number with enumeration value
 
-a "key-mapping" object. keys are list SIDs and value lists in an array the key SIDs. Testing the presence of "key-mapping" in the JSON structure allows to check if the --sid-extention argument has been specified.
+a "key-mapping" object. keys are list SIDs and value lists in an array the key SIDs. Testing the presence of "key-mapping" in the JSON structure allows to check if the --sid-extension argument has been specified.
 
 WARNING: This hack has been tested on YANG Data Model used by SCHC. There is no guaranty that it works in all YANG Data Models.
 

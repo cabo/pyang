@@ -597,7 +597,7 @@ class SidFile:
             self.merge_item('identity', identity)
 
         for substmt in module.substmts:
-            print (substmt.keyword)
+            #print (substmt.keyword)
             if substmt.keyword == 'augment':
                 self.collect_in_substmts(substmt.substmts)
             elif self.has_yang_data_extension(substmt):

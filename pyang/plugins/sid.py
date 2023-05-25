@@ -651,14 +651,14 @@ class SidFile:
     def collect_in_substmts(self, substmts):
         for statement in substmts:
             if statement.keyword in self.leaf_keywords:
-                print (statement.i_module.arg)
+                #print (statement.i_module.arg)
                 for stmt in statement.substmts: 
                     if stmt.keyword == "type":
                         itype= stmt.i_typedef
                         if itype != None:
                             type_descr = {}
                             for type_stmt in itype.substmts:
-                                print  (type_stmt.arg)
+                                #print  (type_stmt.arg)
                                 if type_stmt.arg == "enumeration":
                                     for enum in type_stmt.substmts:
                                         enum_name = enum.arg

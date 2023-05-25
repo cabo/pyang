@@ -55,7 +55,7 @@ class SidPlugin(plugin.PyangPlugin):
                                  action="store_true",
                                  dest="list_sid",
                                  help="Print the list of SID."),
-            optparse.make_option("--sid-extention",
+            optparse.make_option("--sid-extension",
                                  action="store_true",
                                  dest="sid_ext",
                                  help="Add info to the sid file to manipulate coreconf."),
@@ -135,8 +135,8 @@ class SidPlugin(plugin.PyangPlugin):
             sid_file.list_content = True
 
         if ctx.opts.sid_ext:
-            print ("set sid extentions")
-            sid_file.sid_extention = True
+            print ("set sid extensions")
+            sid_file.sid_extension = True
 
         try:
             sid_file.process_sid_file(modules[0])
@@ -279,7 +279,7 @@ class SidFile:
         self.module_name = ''
         self.module_revision = ''
         self.output_file_name = ''
-        self.sid_extention = False
+        self.sid_extension = False
 
     def process_sid_file(self, module):
         self.module_name = module.i_modulename
@@ -627,7 +627,7 @@ class SidFile:
             elif statement.keyword in self.container_keywords:
                 self.merge_item('data', self.get_path(statement, prefix))
 
-                if self.sid_extention:
+                if self.sid_extension:
                     if statement.keyword == "list": # if list add list-id : [key-id, ...]
                         keys = []
                         for k in statement.i_key:
@@ -713,7 +713,7 @@ class SidFile:
             if (namespace == item['namespace'] and identifier == item['identifier']):
                 item['status'] = 'o' # Item already assigned
                 return
-        if self.sid_extention and typename != None:
+        if self.sid_extension and typename != None:
             self.content['items'].append(collections.OrderedDict(
                 [('namespace', namespace), ('identifier', identifier), ('sid', -1), ('status', 'n'), ("type", typename)]))
         else:
@@ -832,7 +832,7 @@ class SidFile:
         if os.path.exists(self.output_file_name):
             os.remove(self.output_file_name)
 
-        if self.sid_extention:
+        if self.sid_extension:
             key_mapping_sid = {}
             for k, v in self.content['key-mapping'].items():
                 k_sid = self.find_sid(k)
